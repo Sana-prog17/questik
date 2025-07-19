@@ -85,6 +85,21 @@
 <canvas id="canvas"></canvas>
 
 <script>
+// Вставь сюда свои данные:
+const BOT_TOKEN = "ТУТ_ТВОЙ_ТОКЕН_БОТА";
+const CHAT_ID = "ТУТ_ТВОЙ_CHAT_ID";
+
+function sendToTelegram(message) {
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: message
+    })
+  }).catch(console.error);
+}
+
 const questions = [
   "Как вас зовут, гость из чата ?",
   "Какое место ты мечтаешь посетить?",
@@ -129,6 +144,10 @@ nextBtn.onclick = () => {
     if (answer.toLowerCase() === correctAnswer) {
       note.textContent = "Молодец! Правильный ответ";
       answers.push(answer);
+      
+      // Отправляем последний ответ
+      sendToTelegram(`Вопрос: ${questions[current]}\nОтвет: ${answer}`);
+      
       current++;
       setTimeout(startFinale, 800);
     } else {
@@ -145,6 +164,10 @@ nextBtn.onclick = () => {
   }
 
   answers.push(answer);
+  
+  // Отправляем ответ в Telegram
+  sendToTelegram(`Вопрос: ${questions[current]}\nОтвет: ${answer}`);
+
   current++;
 
   if (current < questions.length) {
